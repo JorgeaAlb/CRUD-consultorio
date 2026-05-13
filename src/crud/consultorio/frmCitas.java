@@ -28,21 +28,62 @@ public class frmCitas extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jmiImportar = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jmiExportar = new javax.swing.JMenuItem();
+        pmiExportar = new javax.swing.JMenuItem();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jmiImportar.setText("Importar ");
+        jmiImportar.addActionListener(this::jmiImportarActionPerformed);
+
+        jMenuItem1.setText("Importar CSV");
+        jMenuItem1.addActionListener(this::jMenuItem1ActionPerformed);
+        jmiImportar.add(jMenuItem1);
+
+        jmiExportar.setText("Exportar JSON");
+        jmiExportar.addActionListener(this::jmiExportarActionPerformed);
+        jmiImportar.add(jmiExportar);
+
+        pmiExportar.setText("Exportar PDF");
+        pmiExportar.addActionListener(this::pmiExportarActionPerformed);
+        jmiImportar.add(pmiExportar);
+
+        jMenuBar1.add(jmiImportar);
+
+        setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGap(0, 801, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGap(0, 514, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jmiExportarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiExportarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jmiExportarActionPerformed
+
+    private void pmiExportarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pmiExportarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_pmiExportarActionPerformed
+
+    private void jmiImportarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiImportarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jmiImportarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -70,5 +111,10 @@ public class frmCitas extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jmiExportar;
+    private javax.swing.JMenu jmiImportar;
+    private javax.swing.JMenuItem pmiExportar;
     // End of variables declaration//GEN-END:variables
 }
