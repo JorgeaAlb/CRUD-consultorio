@@ -19,6 +19,10 @@ public class frmMain extends javax.swing.JFrame {
         initComponents();
     }
 
+    frmInventario fInventario = new frmInventario();
+    frmClientes fCliente = new frmClientes();
+    frmCitas fCita = new frmCitas();
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -84,15 +88,15 @@ public class frmMain extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnInventarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInventarioActionPerformed
-        // TODO add your handling code here:
+        fInventario.setVisible(true);
     }//GEN-LAST:event_btnInventarioActionPerformed
 
     private void btnCitasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCitasActionPerformed
-        // TODO add your handling code here:
+        fCita.setVisible(true);
     }//GEN-LAST:event_btnCitasActionPerformed
 
     private void btnClientes1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClientes1ActionPerformed
-        // TODO add your handling code here:
+        fCliente.setVisible(true);
     }//GEN-LAST:event_btnClientes1ActionPerformed
 
     /**
