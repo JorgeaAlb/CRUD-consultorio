@@ -17,6 +17,8 @@ public class frmClientes extends javax.swing.JFrame {
      */
     public frmClientes() {
         initComponents();
+        // Fijar tamaño del scroll para que no se estire y salga barrita
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(301, 130));
     }
 
     /**
@@ -465,8 +467,27 @@ public class frmClientes extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtDescripcion1ActionPerformed
 
+    clsCliente updateCliente;
+
     private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed
-        // TODO add your handling code here:
+        if (updateCliente != null) {
+            try {
+                updateCliente.actualizar(
+                    txtCodigo1.getText().trim(),
+                    txtDescripcion1.getText().trim(),
+                    txtPrecio2.getText().trim(),
+                    txtPrecio1.getText().trim(),
+                    txtPrecio4.getText().trim(),
+                    jCheckBox2.isSelected()
+                );
+                javax.swing.JOptionPane.showMessageDialog(this, "Actualizado exitosamente");
+                btnBuscarActionPerformed(null);
+            } catch (Exception ex) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
+            }
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this, "Seleccione un cliente de la lista");
+        }
     }//GEN-LAST:event_btnActualizarActionPerformed
 
     private void txtCodigoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCodigoActionPerformed
@@ -474,7 +495,21 @@ public class frmClientes extends javax.swing.JFrame {
     }//GEN-LAST:event_txtCodigoActionPerformed
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
-        // TODO add your handling code here:
+        try {
+            clsCliente cCli = new clsCliente(
+                    txtCodigo.getText().trim(),
+                    txtDescripcion.getText().trim(),
+                    txtPrecio.getText().trim(),
+                    txtPrecio3.getText().trim(),
+                    txtPrecio5.getText().trim(),
+                    jCheckBox1.isSelected()
+            );
+            cCli.guardar();
+            javax.swing.JOptionPane.showMessageDialog(this, "Guardado exitosamente");
+            btnBuscarActionPerformed(null);
+        } catch(Exception ex) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
+        }
     }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void txtPrecio3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPrecio3ActionPerformed
@@ -486,15 +521,78 @@ public class frmClientes extends javax.swing.JFrame {
     }//GEN-LAST:event_txtPrecio5ActionPerformed
 
     private void lstArticuloValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_lstArticuloValueChanged
-        // TODO add your handling code here:
+        if (!evt.getValueIsAdjusting()) {
+            String registroSeleccionado = lstArticulo.getSelectedValue();
+            if (registroSeleccionado != null) {
+                String[] partes = registroSeleccionado.split("\\|");
+                if (partes.length >= 6) {
+                    try {
+                        String id = partes[0].replace("ID: ", "").trim();
+                        String nombre = partes[1].replace("Nombre: ", "").trim();
+                        String telefono = partes[2].replace("Telefono: ", "").trim();
+                        String correo = partes[3].replace("Correo: ", "").trim();
+                        String fechaNac = partes[4].replace("F.Nac: ", "").trim();
+                        String seguroStr = partes[5].replace("Seguro: ", "").trim();
+                        boolean seguro = Boolean.parseBoolean(seguroStr);
+
+                        // Panel actualizar
+                        txtCodigo1.setText(id);
+                        txtDescripcion1.setText(nombre);
+                        txtPrecio2.setText(telefono);
+                        txtPrecio1.setText(correo);
+                        txtPrecio4.setText(fechaNac);
+                        jCheckBox2.setSelected(seguro);
+
+                        // Panel eliminar
+                        lblCodigo.setText(id);
+                        lblDescripcion.setText(nombre);
+                        lblPrecio1.setText(telefono);
+                        lblPrecio.setText(correo);
+                        lblPrecio2.setText(fechaNac);
+                        lblPrecio3.setText(seguro ? "Si" : "No");
+
+                        updateCliente = new clsCliente(id, nombre, telefono, correo, fechaNac, seguro);
+                    } catch (Exception ex) {
+                        System.out.println("Error parseando: " + ex.getMessage());
+                    }
+                }
+            }
+        }
     }//GEN-LAST:event_lstArticuloValueChanged
 
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
-        // TODO add your handling code here:
+        clsCliente cCli = new clsCliente();
+        javax.swing.DefaultListModel<String> modeloCompleto = cCli.llenarLista();
+        
+        // Filtro de busqueda si es que hay texto
+        if (!jTextField1.getText().trim().isEmpty()) {
+            javax.swing.DefaultListModel<String> modeloFiltrado = new javax.swing.DefaultListModel<>();
+            for (int i = 0; i < modeloCompleto.getSize(); i++) {
+                String item = modeloCompleto.getElementAt(i);
+                if (item.contains("ID: " + jTextField1.getText().trim())) {
+                    modeloFiltrado.addElement(item);
+                }
+            }
+            lstArticulo.setModel(modeloFiltrado);
+        } else {
+            lstArticulo.setModel(modeloCompleto);
+        }
     }//GEN-LAST:event_btnBuscarActionPerformed
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
-        // TODO add your handling code here:
+        if (updateCliente != null) {
+            int respuesta = javax.swing.JOptionPane.showConfirmDialog(this,
+                    "Deseas eliminar al cliente " + updateCliente.getNombre() + "?",
+                    "Eliminar", javax.swing.JOptionPane.YES_NO_OPTION);
+            if (respuesta == javax.swing.JOptionPane.YES_OPTION) {
+                updateCliente.eliminar();
+                javax.swing.JOptionPane.showMessageDialog(this, "Eliminado exitosamente");
+                updateCliente = null;
+                btnBuscarActionPerformed(null);
+            }
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this, "Seleccione un cliente de la lista");
+        }
     }//GEN-LAST:event_btnEliminarActionPerformed
 
     /**
