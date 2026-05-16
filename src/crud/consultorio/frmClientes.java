@@ -15,10 +15,28 @@ public class frmClientes extends javax.swing.JFrame {
     /**
      * Creates new form frmClientes
      */
+    // Campos de fecha con calendario
+    private com.toedter.calendar.JDateChooser dateNacRegistro;
+    private com.toedter.calendar.JDateChooser dateNacActualizar;
+    private final java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
+
     public frmClientes() {
         initComponents();
         // Fijar tamaño del scroll para que no se estire y salga barrita
         jScrollPane1.setPreferredSize(new java.awt.Dimension(301, 130));
+
+        // Crear date choosers para reemplazar los campos de F. Nacimiento
+        dateNacRegistro = new com.toedter.calendar.JDateChooser();
+        dateNacRegistro.setDateFormatString("dd/MM/yyyy");
+        dateNacActualizar = new com.toedter.calendar.JDateChooser();
+        dateNacActualizar.setDateFormatString("dd/MM/yyyy");
+
+        // Reemplazar los textfields por los date choosers en el layout
+        javax.swing.GroupLayout layoutRegistro = (javax.swing.GroupLayout) jPanel1.getLayout();
+        layoutRegistro.replace(txtPrecio5, dateNacRegistro);
+
+        javax.swing.GroupLayout layoutActualizar = (javax.swing.GroupLayout) jPanel4.getLayout();
+        layoutActualizar.replace(txtPrecio4, dateNacActualizar);
     }
 
     /**
@@ -472,12 +490,13 @@ public class frmClientes extends javax.swing.JFrame {
     private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed
         if (updateCliente != null) {
             try {
+                String fechaNac = dateNacActualizar.getDate() != null ? sdf.format(dateNacActualizar.getDate()) : "";
                 updateCliente.actualizar(
                     txtCodigo1.getText().trim(),
                     txtDescripcion1.getText().trim(),
                     txtPrecio2.getText().trim(),
                     txtPrecio1.getText().trim(),
-                    txtPrecio4.getText().trim(),
+                    fechaNac,
                     jCheckBox2.isSelected()
                 );
                 javax.swing.JOptionPane.showMessageDialog(this, "Actualizado exitosamente");
@@ -496,12 +515,13 @@ public class frmClientes extends javax.swing.JFrame {
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
         try {
+            String fechaNac = dateNacRegistro.getDate() != null ? sdf.format(dateNacRegistro.getDate()) : "";
             clsCliente cCli = new clsCliente(
                     txtCodigo.getText().trim(),
                     txtDescripcion.getText().trim(),
                     txtPrecio.getText().trim(),
                     txtPrecio3.getText().trim(),
-                    txtPrecio5.getText().trim(),
+                    fechaNac,
                     jCheckBox1.isSelected()
             );
             cCli.guardar();
@@ -540,7 +560,7 @@ public class frmClientes extends javax.swing.JFrame {
                         txtDescripcion1.setText(nombre);
                         txtPrecio2.setText(telefono);
                         txtPrecio1.setText(correo);
-                        txtPrecio4.setText(fechaNac);
+                        try { dateNacActualizar.setDate(sdf.parse(fechaNac)); } catch (Exception pe) { dateNacActualizar.setDate(null); }
                         jCheckBox2.setSelected(seguro);
 
                         // Panel eliminar

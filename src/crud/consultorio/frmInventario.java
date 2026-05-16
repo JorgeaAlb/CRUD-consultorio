@@ -15,8 +15,26 @@ public class frmInventario extends javax.swing.JFrame {
     /**
      * Creates new form frmInventario
      */
+    // Campos de fecha con calendario
+    private com.toedter.calendar.JDateChooser dateCaducidad;
+    private com.toedter.calendar.JDateChooser dateCaducidadActualizar;
+    private final java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
+
     public frmInventario() {
         initComponents();
+
+        // Crear date choosers para reemplazar los campos de caducidad
+        dateCaducidad = new com.toedter.calendar.JDateChooser();
+        dateCaducidad.setDateFormatString("dd/MM/yyyy");
+        dateCaducidadActualizar = new com.toedter.calendar.JDateChooser();
+        dateCaducidadActualizar.setDateFormatString("dd/MM/yyyy");
+
+        // Reemplazar los textfields por los date choosers en el layout
+        javax.swing.GroupLayout layoutRegistro = (javax.swing.GroupLayout) jPanel1.getLayout();
+        layoutRegistro.replace(txtCaducidad, dateCaducidad);
+
+        javax.swing.GroupLayout layoutActualizar = (javax.swing.GroupLayout) jPanel4.getLayout();
+        layoutActualizar.replace(txtCaducidadActualizar, dateCaducidadActualizar);
     }
 
     /**
@@ -461,12 +479,13 @@ public class frmInventario extends javax.swing.JFrame {
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
         try {
+            String caducidad = dateCaducidad.getDate() != null ? sdf.format(dateCaducidad.getDate()) : "";
             clsInventario cInv = new clsInventario(
                     txtCodigo.getText().trim(),
                     txtDescripcion.getText().trim(),
                     Integer.parseInt(txtCantidad.getText().trim()),
                     Double.parseDouble(txtPrecio.getText().trim()),
-                    txtCaducidad.getText().trim(),
+                    caducidad,
                     chkRefrigeracion.isSelected()
             );
             cInv.guardar();
@@ -488,12 +507,13 @@ public class frmInventario extends javax.swing.JFrame {
     private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed
         if (updateInventario != null) {
             try {
+                String caducidad = dateCaducidadActualizar.getDate() != null ? sdf.format(dateCaducidadActualizar.getDate()) : "";
                 updateInventario.actualizar(
                     txtCodigoActualizar.getText().trim(),
                     txtDescripcionActualizar.getText().trim(),
                     txtCantidadActualizar.getText().trim(),
                     txtPrecioActualizar.getText().trim(),
-                    txtCaducidadActualizar.getText().trim(),
+                    caducidad,
                     chkRefrigeracionActualizar.isSelected()
                 );
                 javax.swing.JOptionPane.showMessageDialog(this, "Actualizado exitosamente");
@@ -525,7 +545,7 @@ public class frmInventario extends javax.swing.JFrame {
                         txtDescripcionActualizar.setText(descripcion);
                         txtCantidadActualizar.setText(cantidad);
                         txtPrecioActualizar.setText(precio);
-                        txtCaducidadActualizar.setText(caducidad);
+                        try { dateCaducidadActualizar.setDate(sdf.parse(caducidad)); } catch (Exception pe) { dateCaducidadActualizar.setDate(null); }
                         chkRefrigeracionActualizar.setSelected(refri);
 
                         lblCodigoEliminar.setText(codigo);

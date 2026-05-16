@@ -15,12 +15,30 @@ public class frmCitas extends javax.swing.JFrame {
     /**
      * Creates new form frmCitas
      */
+    // Campos de fecha con calendario
+    private com.toedter.calendar.JDateChooser dateRegistro;
+    private com.toedter.calendar.JDateChooser dateActualizar;
+    private final java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
+
     public frmCitas() {
         initComponents();
         // Fijar tamaño del scroll para que no se estire y salga barrita
         jScrollPane1.setPreferredSize(new java.awt.Dimension(301, 130));
         // Que no cierre toda la app al cerrar esta ventana
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+
+        // Crear date choosers para reemplazar los campos de texto de fecha
+        dateRegistro = new com.toedter.calendar.JDateChooser();
+        dateRegistro.setDateFormatString("dd/MM/yyyy");
+        dateActualizar = new com.toedter.calendar.JDateChooser();
+        dateActualizar.setDateFormatString("dd/MM/yyyy");
+
+        // Reemplazar los textfields de fecha por los date choosers en el layout
+        javax.swing.GroupLayout layoutRegistro = (javax.swing.GroupLayout) jPanel2.getLayout();
+        layoutRegistro.replace(txtPrecio, dateRegistro);
+
+        javax.swing.GroupLayout layoutActualizar = (javax.swing.GroupLayout) jPanel6.getLayout();
+        layoutActualizar.replace(txtPrecio9, dateActualizar);
     }
 
     /**
@@ -475,10 +493,11 @@ public class frmCitas extends javax.swing.JFrame {
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
         try {
+            String fecha = dateRegistro.getDate() != null ? sdf.format(dateRegistro.getDate()) : "";
             clsCitas cCita = new clsCitas(
                     txtCodigo1.getText().trim(),
                     txtDescripcion.getText().trim(),
-                    txtPrecio.getText().trim(),
+                    fecha,
                     txtPrecio3.getText().trim(),
                     Double.parseDouble(txtPrecio5.getText().trim()),
                     jCheckBox1.isSelected()
@@ -517,7 +536,7 @@ public class frmCitas extends javax.swing.JFrame {
                         // Panel actualizar
                         txtCodigo4.setText(id);
                         txtDescripcion3.setText(paciente);
-                        txtPrecio9.setText(fecha);
+                        try { dateActualizar.setDate(sdf.parse(fecha)); } catch (Exception pe) { dateActualizar.setDate(null); }
                         txtPrecio10.setText(edad);
                         txtPrecio11.setText(costo);
                         jCheckBox4.setSelected(urgencia);
@@ -581,10 +600,11 @@ public class frmCitas extends javax.swing.JFrame {
     private void btnGuardar3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardar3ActionPerformed
         if (updateCita != null) {
             try {
+                String fecha = dateActualizar.getDate() != null ? sdf.format(dateActualizar.getDate()) : "";
                 updateCita.actualizar(
                     txtCodigo4.getText().trim(),
                     txtDescripcion3.getText().trim(),
-                    txtPrecio9.getText().trim(),
+                    fecha,
                     txtPrecio10.getText().trim(),
                     txtPrecio11.getText().trim(),
                     jCheckBox4.isSelected()
