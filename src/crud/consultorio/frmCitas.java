@@ -17,6 +17,10 @@ public class frmCitas extends javax.swing.JFrame {
      */
     public frmCitas() {
         initComponents();
+        // Fijar tamaño del scroll para que no se estire y salga barrita
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(301, 130));
+        // Que no cierre toda la app al cerrar esta ventana
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
     }
 
     /**
@@ -467,8 +471,24 @@ public class frmCitas extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtCodigo1ActionPerformed
 
+    clsCitas updateCita;
+
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
-        // TODO add your handling code here:
+        try {
+            clsCitas cCita = new clsCitas(
+                    txtCodigo1.getText().trim(),
+                    txtDescripcion.getText().trim(),
+                    txtPrecio.getText().trim(),
+                    txtPrecio3.getText().trim(),
+                    Double.parseDouble(txtPrecio5.getText().trim()),
+                    jCheckBox1.isSelected()
+            );
+            cCita.guardar();
+            javax.swing.JOptionPane.showMessageDialog(this, "Guardado exitosamente");
+            btnBuscarActionPerformed(null);
+        } catch(Exception ex) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
+        }
     }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void txtPrecio3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPrecio3ActionPerformed
@@ -480,15 +500,78 @@ public class frmCitas extends javax.swing.JFrame {
     }//GEN-LAST:event_txtPrecio5ActionPerformed
 
     private void lstArticuloValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_lstArticuloValueChanged
-        // TODO add your handling code here:
+        if (!evt.getValueIsAdjusting()) {
+            String registroSeleccionado = lstArticulo.getSelectedValue();
+            if (registroSeleccionado != null) {
+                String[] partes = registroSeleccionado.split("\\|");
+                if (partes.length >= 6) {
+                    try {
+                        String id = partes[0].replace("ID: ", "").trim();
+                        String paciente = partes[1].replace("Paciente: ", "").trim();
+                        String fecha = partes[2].replace("Fecha: ", "").trim();
+                        String edad = partes[3].replace("Edad: ", "").trim();
+                        String costo = partes[4].replace("Costo: ", "").trim();
+                        String urgenciaStr = partes[5].replace("Urgencia: ", "").trim();
+                        boolean urgencia = Boolean.parseBoolean(urgenciaStr);
+
+                        // Panel actualizar
+                        txtCodigo4.setText(id);
+                        txtDescripcion3.setText(paciente);
+                        txtPrecio9.setText(fecha);
+                        txtPrecio10.setText(edad);
+                        txtPrecio11.setText(costo);
+                        jCheckBox4.setSelected(urgencia);
+
+                        // Panel eliminar
+                        lblCodigoEliminar.setText(id);
+                        lblDescripcionEliminar.setText(paciente);
+                        lblCantidadEliminar.setText(fecha);
+                        lblPrecioEliminar.setText(edad);
+                        lblCaducidadEliminar.setText(costo);
+                        lblRefrigeracionEliminar.setText(urgencia ? "Si" : "No");
+
+                        updateCita = new clsCitas(id, paciente, fecha, edad, Double.parseDouble(costo), urgencia);
+                    } catch (Exception ex) {
+                        System.out.println("Error parseando: " + ex.getMessage());
+                    }
+                }
+            }
+        }
     }//GEN-LAST:event_lstArticuloValueChanged
 
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
-        // TODO add your handling code here:
+        clsCitas cCita = new clsCitas();
+        javax.swing.DefaultListModel<String> modeloCompleto = cCita.llenarLista();
+        
+        // Filtro de busqueda si es que hay texto
+        if (!jTextField1.getText().trim().isEmpty()) {
+            javax.swing.DefaultListModel<String> modeloFiltrado = new javax.swing.DefaultListModel<>();
+            for (int i = 0; i < modeloCompleto.getSize(); i++) {
+                String item = modeloCompleto.getElementAt(i);
+                if (item.contains("ID: " + jTextField1.getText().trim())) {
+                    modeloFiltrado.addElement(item);
+                }
+            }
+            lstArticulo.setModel(modeloFiltrado);
+        } else {
+            lstArticulo.setModel(modeloCompleto);
+        }
     }//GEN-LAST:event_btnBuscarActionPerformed
 
     private void btnGuardar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardar1ActionPerformed
-        // TODO add your handling code here:
+        if (updateCita != null) {
+            int respuesta = javax.swing.JOptionPane.showConfirmDialog(this,
+                    "Deseas eliminar la cita de " + updateCita.getPaciente() + "?",
+                    "Eliminar", javax.swing.JOptionPane.YES_NO_OPTION);
+            if (respuesta == javax.swing.JOptionPane.YES_OPTION) {
+                updateCita.eliminar();
+                javax.swing.JOptionPane.showMessageDialog(this, "Eliminado exitosamente");
+                updateCita = null;
+                btnBuscarActionPerformed(null);
+            }
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this, "Seleccione una cita de la lista");
+        }
     }//GEN-LAST:event_btnGuardar1ActionPerformed
 
     private void txtCodigo4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCodigo4ActionPerformed
@@ -496,7 +579,24 @@ public class frmCitas extends javax.swing.JFrame {
     }//GEN-LAST:event_txtCodigo4ActionPerformed
 
     private void btnGuardar3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardar3ActionPerformed
-        // TODO add your handling code here:
+        if (updateCita != null) {
+            try {
+                updateCita.actualizar(
+                    txtCodigo4.getText().trim(),
+                    txtDescripcion3.getText().trim(),
+                    txtPrecio9.getText().trim(),
+                    txtPrecio10.getText().trim(),
+                    txtPrecio11.getText().trim(),
+                    jCheckBox4.isSelected()
+                );
+                javax.swing.JOptionPane.showMessageDialog(this, "Actualizado exitosamente");
+                btnBuscarActionPerformed(null);
+            } catch (Exception ex) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
+            }
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this, "Seleccione una cita de la lista");
+        }
     }//GEN-LAST:event_btnGuardar3ActionPerformed
 
     private void txtPrecio10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPrecio10ActionPerformed
